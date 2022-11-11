@@ -13,29 +13,33 @@ import (
 //                 21
 
 const (
-	LENGTH_CONNECTION_ID = 21
+	// LengthConnectionID ...
+	LengthConnectionID = 21
 )
 
+// Close ...
 type Close struct {
-	CONNECTION_ID string
+	ConnectionID string
 }
 
+// Encode encodes the data
 func (r *Close) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.CONNECTION_ID)
+	buf.WriteString(r.ConnectionID)
 	return buf.Bytes(), nil
 }
 
+// Decode decodes the data
 func (r *Close) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
-	buf := make([]byte, LENGTH_CONNECTION_ID)
+	buf := make([]byte, LengthConnectionID)
 	n, err := io.ReadFull(reader, buf)
-	if n != LENGTH_CONNECTION_ID || err != nil {
+	if n != LengthConnectionID || err != nil {
 		return fmt.Errorf("failed to read connection id:  %s", err)
 	}
-	r.CONNECTION_ID = string(buf)
+	r.ConnectionID = string(buf)
 
 	return nil
 }

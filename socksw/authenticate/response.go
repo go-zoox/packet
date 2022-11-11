@@ -13,14 +13,17 @@ import (
 //            1     |  -
 
 const (
-	LENGTH_STATUS = 1
+	// LengthStatus is the byte length of STATUS
+	LengthStatus = 1
 )
 
+// Response is the response for authenticate
 type Response struct {
 	STATUS  uint8
 	MESSAGE string
 }
 
+// Encode encodes the response for authenticate
 func (r *Response) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
 	buf.WriteByte(r.STATUS)
@@ -28,13 +31,14 @@ func (r *Response) Encode() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Decode decodes the response for authenticate
 func (r *Response) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// STATUS
-	buf := make([]byte, LENGTH_STATUS)
+	buf := make([]byte, LengthStatus)
 	n, err := io.ReadFull(reader, buf)
-	if n != LENGTH_STATUS || err != nil {
+	if n != LengthStatus || err != nil {
 		return fmt.Errorf("failed to read status:  %s", err)
 	}
 	r.STATUS = uint8(buf[0])

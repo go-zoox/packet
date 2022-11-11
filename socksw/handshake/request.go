@@ -16,39 +16,54 @@ import (
 //            1     |  -
 
 const (
-	LENGTH_CONNECTION_ID              = 21
-	LENGTH_TARGET_USER_CLIENT_ID      = 10
-	LENGTH_TARGET_USER_PAIR_SIGNATURE = 64
-	LENGTH_NETWORK                    = 1
-	LENGTH_ATYP                       = 1
-	// LENGTH_DST_ADDR = 4
-	LENGTH_DST_PORT = 2
+	// LengthConnectionID ...
+	LengthConnectionID = 21
+	// LengthTargetUserClientID ...
+	LengthTargetUserClientID = 10
+	// LengthTargetUserPairSignature ...
+	LengthTargetUserPairSignature = 64
+	// LengthNetwork ...
+	LengthNetwork = 1
+	// LengthATyp ...
+	LengthATyp = 1
 
-	ATYP_IPv4   = 0x01
-	ATYP_IPv6   = 0x04
-	ATYP_DOMAIN = 0x03
+	// LengthDSTAddr = 4
 
-	NETWORK_TCP = 0x01
-	NETWORK_UDP = 0x02
+	// LengthDSTPort ...
+	LengthDSTPort = 2
+
+	// ATypIPv4 ...
+	ATypIPv4 = 0x01
+	// ATypIPv6 ...
+	ATypIPv6 = 0x04
+	// ATypDomain ...
+	ATypDomain = 0x03
+
+	// NetworkTCP ...
+	NetworkTCP = 0x01
+	// NetworkUDP ...
+	NetworkUDP = 0x02
 )
 
+// Request is the request for handshake
 type Request struct {
-	CONNECTION_ID              string
-	TARGET_USER_CLIENT_ID      string
-	TARGET_USER_PAIR_SIGNATURE string
-	NETWORK                    uint8
-	ATYP                       uint8
-	DST_ADDR                   string
-	DST_PORT                   uint16
+	ConnectionID            string
+	TargetUserClientID      string
+	TargetUserPairSignature string
+	Network                 uint8
+	ATyp                    uint8
+	DSTAddr                 string
+	DSTPort                 uint16
 }
 
+// Encode encodes the data
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.CONNECTION_ID)
-	buf.WriteString(r.TARGET_USER_CLIENT_ID)
-	buf.WriteString(r.TARGET_USER_PAIR_SIGNATURE)
-	buf.WriteByte(r.NETWORK)
-	buf.WriteByte(r.ATYP)
+	buf.WriteString(r.ConnectionID)
+	buf.WriteString(r.TargetUserClientID)
+	buf.WriteString(r.TargetUserPairSignature)
+	buf.WriteByte(r.Network)
+	buf.WriteByte(r.ATyp)
 
 	// switch a.ATyp {
 	// case ATYP_IPv4:
@@ -62,58 +77,59 @@ func (r *Request) Encode() ([]byte, error) {
 	// 	}
 	// }
 
-	DSTAddrLength := len(r.DST_ADDR)
+	DSTAddrLength := len(r.DSTAddr)
 	buf.WriteByte(byte(DSTAddrLength))
-	buf.WriteString(r.DST_ADDR)
+	buf.WriteString(r.DSTAddr)
 	portBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(portBytes, r.DST_PORT)
+	binary.BigEndian.PutUint16(portBytes, r.DSTPort)
 	buf.Write(portBytes)
 
 	return buf.Bytes(), nil
 }
 
+// Decode decodes the data
 func (r *Request) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
-	buf := make([]byte, LENGTH_CONNECTION_ID)
+	buf := make([]byte, LengthConnectionID)
 	n, err := io.ReadFull(reader, buf)
-	if n != LENGTH_CONNECTION_ID || err != nil {
+	if n != LengthConnectionID || err != nil {
 		return fmt.Errorf("failed to read connection id:  %s", err)
 	}
-	r.CONNECTION_ID = string(buf)
+	r.ConnectionID = string(buf)
 
 	// TARGET_USER_CLIENT_ID
-	buf = make([]byte, LENGTH_TARGET_USER_CLIENT_ID)
+	buf = make([]byte, LengthTargetUserClientID)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_TARGET_USER_CLIENT_ID || err != nil {
+	if n != LengthTargetUserClientID || err != nil {
 		return fmt.Errorf("failed to read target user client id:  %s", err)
 	}
-	r.TARGET_USER_CLIENT_ID = string(buf)
+	r.TargetUserClientID = string(buf)
 
 	// TARGET_USER_PAIR_KEY
-	buf = make([]byte, LENGTH_TARGET_USER_PAIR_SIGNATURE)
+	buf = make([]byte, LengthTargetUserPairSignature)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_TARGET_USER_PAIR_SIGNATURE || err != nil {
+	if n != LengthTargetUserPairSignature || err != nil {
 		return fmt.Errorf("failed to read target user pair key:  %s", err)
 	}
-	r.TARGET_USER_PAIR_SIGNATURE = string(buf)
+	r.TargetUserPairSignature = string(buf)
 
 	// NETWORK
-	buf = make([]byte, LENGTH_NETWORK)
+	buf = make([]byte, LengthNetwork)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_NETWORK || err != nil {
+	if n != LengthNetwork || err != nil {
 		return fmt.Errorf("failed to read signature:  %s", err)
 	}
-	r.NETWORK = uint8(buf[0])
+	r.Network = uint8(buf[0])
 
 	// ATYP
-	buf = make([]byte, LENGTH_ATYP)
+	buf = make([]byte, LengthATyp)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_ATYP || err != nil {
+	if n != LengthATyp || err != nil {
 		return fmt.Errorf("failed to read atyp:  %s", err)
 	}
-	r.ATYP = uint8(buf[0])
+	r.ATyp = uint8(buf[0])
 
 	// DSTAddr
 	buf = make([]byte, 1)
@@ -127,15 +143,15 @@ func (r *Request) Decode(raw []byte) error {
 	if n != dstAddrLength || err != nil {
 		return fmt.Errorf("failed to read dst addr:  %s", err)
 	}
-	r.DST_ADDR = string(buf)
+	r.DSTAddr = string(buf)
 
 	// DSTAddrPort
-	buf = make([]byte, LENGTH_DST_PORT)
+	buf = make([]byte, LengthDSTPort)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_DST_PORT || err != nil {
+	if n != LengthDSTPort || err != nil {
 		return fmt.Errorf("failed to read atyp:  %s", err)
 	}
-	r.DST_PORT = binary.BigEndian.Uint16(buf[:2])
+	r.DSTPort = binary.BigEndian.Uint16(buf[:2])
 
 	return nil
 }

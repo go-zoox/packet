@@ -36,6 +36,7 @@ jobs:
           golint -set_exit_status
           go vet
           test -z "$(goimports -l .)"
+          
       - name: Test
         run: goveralls -service=github
         env:

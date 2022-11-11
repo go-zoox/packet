@@ -7,17 +7,21 @@ import (
 )
 
 const (
-	LENGTH_VER      = 1
-	LENGTH_NMETHODS = 1
+	// LengthVer is the byte length of VER
+	LengthVer = 1
+	// LengthNMethods is the byte length of NMETHODS
+	LengthNMethods = 1
 	// LENGTH_METHODS  = 1 ~ 255
 )
 
+// Request is the request for authenticate
 type Request struct {
 	VER      byte
 	NMETHODS byte
 	METHODS  []byte
 }
 
+// Encode encodes the request
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	buf.WriteByte(r.VER)
@@ -26,30 +30,31 @@ func (r *Request) Encode() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Decode decodes the request
 func (r *Request) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// VER
-	buf := make([]byte, LENGTH_VER)
+	buf := make([]byte, LengthVer)
 	n, err := io.ReadFull(reader, buf)
-	if n != LENGTH_VER || err != nil {
+	if n != LengthVer || err != nil {
 		return fmt.Errorf("failed to read ver:  %s", err)
 	}
 	r.VER = buf[0]
 
 	// NMETHODS
-	buf = make([]byte, LENGTH_NMETHODS)
+	buf = make([]byte, LengthNMethods)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_NMETHODS || err != nil {
+	if n != LengthNMethods || err != nil {
 		return fmt.Errorf("failed to read nmethods:  %s", err)
 	}
 	r.NMETHODS = buf[0]
 
 	// METHODS
-	LENGTH_METHODS := int(r.NMETHODS)
-	buf = make([]byte, LENGTH_METHODS)
+	LengthMethods := int(r.NMETHODS)
+	buf = make([]byte, LengthMethods)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_METHODS || err != nil {
+	if n != LengthMethods || err != nil {
 		return fmt.Errorf("failed to read METHODS:  %s", err)
 	}
 	r.METHODS = buf

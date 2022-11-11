@@ -4,12 +4,12 @@ import "testing"
 
 func TestResponseEncodeDecode(t *testing.T) {
 	packet := &Response{
-		VER:       0x05,
-		REP:       0x00,
-		RSV:       0x00,
-		ATYP:      0x01,
-		BIND_ADDR: "127.0.0.1",
-		BIND_PORT: 8080,
+		VER:      0x05,
+		REP:      0x00,
+		RSV:      0x00,
+		ATYP:     0x01,
+		BINDAddr: "127.0.0.1",
+		BINDPort: 8080,
 	}
 
 	encoded, err := packet.Encode()
@@ -38,11 +38,11 @@ func TestResponseEncodeDecode(t *testing.T) {
 		t.Fatalf("ATYP not match, expect %d, but got %d", packet.ATYP, decoded.ATYP)
 	}
 
-	if decoded.BIND_ADDR != packet.BIND_ADDR {
-		t.Fatalf("BIND_ADDR not match, expect %s, but got %s", packet.BIND_ADDR, decoded.BIND_ADDR)
+	if decoded.BINDAddr != packet.BINDAddr {
+		t.Fatalf("BIND_ADDR not match, expect %s, but got %s", packet.BINDAddr, decoded.BINDAddr)
 	}
 
-	if decoded.BIND_PORT != packet.BIND_PORT {
-		t.Fatalf("BIND_PORT not match, expect %d, but got %d", packet.BIND_PORT, decoded.BIND_PORT)
+	if decoded.BINDPort != packet.BINDPort {
+		t.Fatalf("BIND_PORT not match, expect %d, but got %d", packet.BINDPort, decoded.BINDPort)
 	}
 }

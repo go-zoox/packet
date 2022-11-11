@@ -13,67 +13,74 @@ import (
 //   1  |  1  |  1     |   1      | -
 
 const (
-	LENGTH_VER         = 1
-	LENGTH_CMD         = 1
-	LENGTH_CRYPTO      = 1
-	LENGTH_COMPRESSION = 1
+	// LengthVer ...
+	LengthVer = 1
+	// LengthCmd ...
+	LengthCmd = 1
+	// LengthCrypto ...
+	LengthCrypto = 1
+	// LengthCompression ...
+	LengthCompression = 1
 )
 
+// Base ...
 type Base struct {
-	VER         uint8
-	CMD         uint8
-	CRYPTO      uint8
-	COMPRESSION uint8
-	DATA        []byte
+	Ver         uint8
+	Cmd         uint8
+	Crypto      uint8
+	Compression uint8
+	Data        []byte
 }
 
+// Encode encodes the base data
 func (r *Base) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
-	buf.WriteByte(r.VER)
-	buf.WriteByte(r.CMD)
-	buf.WriteByte(r.CRYPTO)
-	buf.WriteByte(r.COMPRESSION)
-	buf.Write(r.DATA)
+	buf.WriteByte(r.Ver)
+	buf.WriteByte(r.Cmd)
+	buf.WriteByte(r.Crypto)
+	buf.WriteByte(r.Compression)
+	buf.Write(r.Data)
 	return buf.Bytes(), nil
 }
 
+// Decode decodes the base data
 func (r *Base) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// VER
-	buf := make([]byte, LENGTH_VER)
+	buf := make([]byte, LengthVer)
 	n, err := io.ReadFull(reader, buf)
-	if n != LENGTH_VER || err != nil {
+	if n != LengthVer || err != nil {
 		return fmt.Errorf("failed to read VER:  %s", err)
 	}
-	r.VER = uint8(buf[0])
+	r.Ver = uint8(buf[0])
 
 	// CMD
-	buf = make([]byte, LENGTH_CMD)
+	buf = make([]byte, LengthCmd)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_CMD || err != nil {
+	if n != LengthCmd || err != nil {
 		return fmt.Errorf("failed to read CMD:  %s", err)
 	}
-	r.CMD = uint8(buf[0])
+	r.Cmd = uint8(buf[0])
 
 	// CRYPTO
-	buf = make([]byte, LENGTH_CRYPTO)
+	buf = make([]byte, LengthCrypto)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_CRYPTO || err != nil {
+	if n != LengthCrypto || err != nil {
 		return fmt.Errorf("failed to read CRYPTO:  %s", err)
 	}
-	r.CRYPTO = uint8(buf[0])
+	r.Crypto = uint8(buf[0])
 
 	// COMPRESSION
-	buf = make([]byte, LENGTH_COMPRESSION)
+	buf = make([]byte, LengthCompression)
 	n, err = io.ReadFull(reader, buf)
-	if n != LENGTH_COMPRESSION || err != nil {
+	if n != LengthCompression || err != nil {
 		return fmt.Errorf("failed to read COMPRESSION:  %s", err)
 	}
-	r.COMPRESSION = uint8(buf[0])
+	r.Compression = uint8(buf[0])
 
 	// DATA
-	r.DATA, err = io.ReadAll(reader)
+	r.Data, err = io.ReadAll(reader)
 	if err != nil {
 		return fmt.Errorf("failed to read DATA:  %s", err)
 	}

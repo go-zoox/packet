@@ -4,9 +4,9 @@ import "testing"
 
 func TestResponseEncodeDecode(t *testing.T) {
 	packet := &Response{
-		CONNECTION_ID: "012345678901234567890",
-		STATUS:        0x01,
-		MESSAGE:       "hello world",
+		ConnectionID: "012345678901234567890",
+		Status:       0x01,
+		Message:      "hello world",
 	}
 
 	encoded, err := packet.Encode()
@@ -19,11 +19,11 @@ func TestResponseEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to decode %s", err)
 	}
 
-	if decoded.STATUS != packet.STATUS {
-		t.Fatalf("Status not match, expect %d, but got %d", packet.STATUS, decoded.STATUS)
+	if decoded.Status != packet.Status {
+		t.Fatalf("Status not match, expect %d, but got %d", packet.Status, decoded.Status)
 	}
 
-	if decoded.MESSAGE != packet.MESSAGE {
-		t.Fatalf("Message not match, expect %s, but got %s", packet.MESSAGE, decoded.MESSAGE)
+	if decoded.Message != packet.Message {
+		t.Fatalf("Message not match, expect %s, but got %s", packet.Message, decoded.Message)
 	}
 }

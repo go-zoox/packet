@@ -13,33 +13,37 @@ import (
 //					       21      |  -
 
 const (
-	LENGTH_CONNECTION_ID = 21
+	// LengthConnectionID ...
+	LengthConnectionID = 21
 )
 
+// Forward ...
 type Forward struct {
-	CONNECTION_ID string
-	DATA          []byte
+	ConnectionID string
+	Data         []byte
 }
 
+// Encode encodes the forward data
 func (r *Forward) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.CONNECTION_ID)
-	buf.Write(r.DATA)
+	buf.WriteString(r.ConnectionID)
+	buf.Write(r.Data)
 	return buf.Bytes(), nil
 }
 
+// Decode decodes the forward data
 func (r *Forward) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
-	buf := make([]byte, LENGTH_CONNECTION_ID)
+	buf := make([]byte, LengthConnectionID)
 	n, err := io.ReadFull(reader, buf)
-	if n != LENGTH_CONNECTION_ID || err != nil {
+	if n != LengthConnectionID || err != nil {
 		return fmt.Errorf("failed to read connection id:  %s", err)
 	}
-	r.CONNECTION_ID = string(buf)
+	r.ConnectionID = string(buf)
 
-	r.DATA, err = io.ReadAll(reader)
+	r.Data, err = io.ReadAll(reader)
 	if err != nil {
 		return fmt.Errorf("failed to read data:  %s", err)
 	}

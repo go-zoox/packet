@@ -4,12 +4,12 @@ import "testing"
 
 func TestRequestEncodeDecode(t *testing.T) {
 	packet := &Request{
-		VER:      0x05,
-		CMD:      0x01,
-		RSV:      0x00,
-		ATYP:     0x01,
-		DST_ADDR: "127.0.0.1",
-		DST_PORT: 8080,
+		VER:     0x05,
+		CMD:     0x01,
+		RSV:     0x00,
+		ATYP:    0x01,
+		DSTADDR: "127.0.0.1",
+		DSTPORT: 8080,
 	}
 
 	encoded, err := packet.Encode()
@@ -38,11 +38,11 @@ func TestRequestEncodeDecode(t *testing.T) {
 		t.Fatalf("ATYP not match, expect %d, but got %d", packet.ATYP, decoded.ATYP)
 	}
 
-	if decoded.DST_ADDR != packet.DST_ADDR {
-		t.Fatalf("DST_ADDR not match, expect %s, but got %s", packet.DST_ADDR, decoded.DST_ADDR)
+	if decoded.DSTADDR != packet.DSTADDR {
+		t.Fatalf("DST_ADDR not match, expect %s, but got %s", packet.DSTADDR, decoded.DSTADDR)
 	}
 
-	if decoded.DST_PORT != packet.DST_PORT {
-		t.Fatalf("DST_PORT not match, expect %d, but got %d", packet.DST_PORT, decoded.DST_PORT)
+	if decoded.DSTPORT != packet.DSTPORT {
+		t.Fatalf("DST_PORT not match, expect %d, but got %d", packet.DSTPORT, decoded.DSTPORT)
 	}
 }
