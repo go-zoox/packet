@@ -20,18 +20,18 @@ const (
 )
 
 type Request struct {
-	UserClientID string
-	Timestamp    string
-	Nonce        string
-	Signature    string
+	USER_CLIENT_ID string
+	TIMESTAMP      string
+	NONCE          string
+	SIGNATURE      string
 }
 
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.UserClientID)
-	buf.WriteString(r.Timestamp)
-	buf.WriteString(r.Nonce)
-	buf.WriteString(r.Signature)
+	buf.WriteString(r.USER_CLIENT_ID)
+	buf.WriteString(r.TIMESTAMP)
+	buf.WriteString(r.NONCE)
+	buf.WriteString(r.SIGNATURE)
 	return buf.Bytes(), nil
 }
 
@@ -44,7 +44,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LENGTH_USER_CLIENT_ID || err != nil {
 		return fmt.Errorf("failed to read user client id:  %s", err)
 	}
-	r.UserClientID = string(buf)
+	r.USER_CLIENT_ID = string(buf)
 
 	// TIMESTAMP
 	buf = make([]byte, LENGTH_TIMESTAMP)
@@ -52,7 +52,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LENGTH_TIMESTAMP || err != nil {
 		return fmt.Errorf("failed to read timestamp:  %s", err)
 	}
-	r.Timestamp = string(buf)
+	r.TIMESTAMP = string(buf)
 
 	// NONCE
 	buf = make([]byte, LENGTH_NONCE)
@@ -60,7 +60,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LENGTH_NONCE || err != nil {
 		return fmt.Errorf("failed to read nonce:  %s", err)
 	}
-	r.Nonce = string(buf)
+	r.NONCE = string(buf)
 
 	// SIGNATURE
 	buf = make([]byte, LENGTH_SIGNATURE)
@@ -68,7 +68,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LENGTH_SIGNATURE || err != nil {
 		return fmt.Errorf("failed to read signature:  %s", err)
 	}
-	r.Signature = string(buf)
+	r.SIGNATURE = string(buf)
 
 	return nil
 }

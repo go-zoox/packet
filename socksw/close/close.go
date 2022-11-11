@@ -17,27 +17,25 @@ const (
 )
 
 type Close struct {
-	ConnectionID string
+	CONNECTION_ID string
 }
 
-func Encode(a *Close) ([]byte, error) {
+func (r *Close) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(a.ConnectionID)
+	buf.WriteString(r.CONNECTION_ID)
 	return buf.Bytes(), nil
 }
 
-func Decode(raw []byte) (*Close, error) {
+func (r *Close) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
 	buf := make([]byte, LENGTH_CONNECTION_ID)
 	n, err := io.ReadFull(reader, buf)
 	if n != LENGTH_CONNECTION_ID || err != nil {
-		return nil, fmt.Errorf("failed to read connection id:  %s", err)
+		return fmt.Errorf("failed to read connection id:  %s", err)
 	}
-	ConnectionID := string(buf)
+	r.CONNECTION_ID = string(buf)
 
-	return &Close{
-		ConnectionID,
-	}, nil
+	return nil
 }

@@ -1,9 +1,9 @@
-package data
+package forward
 
 import "testing"
 
 func TestEncodeDecode(t *testing.T) {
-	packet := &Request{
+	packet := &Forward{
 		DATA: []byte("hello, Zero"),
 	}
 
@@ -12,7 +12,7 @@ func TestEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to encode %s", err)
 	}
 
-	decoded := &Request{}
+	decoded := &Forward{}
 	if err := decoded.Decode(encoded); err != nil {
 		t.Fatalf("failed to decode %s", err)
 	}

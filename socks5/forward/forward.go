@@ -1,4 +1,4 @@
-package data
+package forward
 
 import (
 	"bytes"
@@ -6,15 +6,15 @@ import (
 	"io"
 )
 
-type Request struct {
+type Forward struct {
 	DATA []byte
 }
 
-func (r *Request) Encode() ([]byte, error) {
+func (r *Forward) Encode() ([]byte, error) {
 	return r.DATA, nil
 }
 
-func (r *Request) Decode(raw []byte) (err error) {
+func (r *Forward) Decode(raw []byte) (err error) {
 	reader := bytes.NewReader(raw)
 
 	// DATA
