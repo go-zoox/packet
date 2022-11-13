@@ -28,6 +28,7 @@ go get -u github.com/go-zoox/packet
 * [ ] Shadowsocks - [SPEC](https://www.ichenxiaoyu.com/ss/)
 * [ ] Socks4      - [RFC](https://www.openssh.com/txt/socks4.protocol)
 * [ ] Socks6      - [RFC](https://datatracker.ietf.org/doc/html/draft-olteanu-intarea-socks-6)
+* [ ] HTTP
 
 ## License
 GoZoox is released under the [MIT License](./LICENSE).
