@@ -13,15 +13,24 @@ const (
 
 // Response is the response for authenticate
 type Response struct {
-	VER    byte
-	METHOD byte
+	Ver    byte
+	Method byte
 }
 
 // Encode encodes the response for authenticate
 func (r *Response) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
-	buf.WriteByte(r.VER)
-	buf.WriteByte(r.METHOD)
+
+	err := buf.WriteByte(r.Ver)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Ver: %s", err)
+	}
+
+	err = buf.WriteByte(r.Method)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Method: %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 
@@ -35,7 +44,7 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthVer || err != nil {
 		return fmt.Errorf("failed to read ver:  %s", err)
 	}
-	r.VER = buf[0]
+	r.Ver = buf[0]
 
 	// METHOD
 	buf = make([]byte, LengthMethod)
@@ -43,7 +52,7 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthMethod || err != nil {
 		return fmt.Errorf("failed to read method:  %s", err)
 	}
-	r.METHOD = buf[0]
+	r.Method = buf[0]
 
 	return nil
 }

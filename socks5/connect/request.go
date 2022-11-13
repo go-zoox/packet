@@ -42,26 +42,48 @@ const (
 
 // Request is the request for connect
 type Request struct {
-	VER     uint8
-	CMD     uint8
-	RSV     uint8
-	ATYP    uint8
-	DSTADDR string
-	DSTPORT int
+	Ver     uint8
+	Cmd     uint8
+	Rsv     uint8
+	ATyp    uint8
+	DSTAddr string
+	DSTPort int
 }
 
 // Encode encodes the request
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
-	buf.WriteByte(r.VER)
-	buf.WriteByte(r.CMD)
-	buf.WriteByte(r.RSV)
-	buf.WriteByte(r.ATYP)
 
-	switch r.ATYP {
+	err := buf.WriteByte(r.Ver)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Ver: %s", err)
+	}
+
+	err = buf.WriteByte(r.Cmd)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Ver: %s", err)
+	}
+
+	err = buf.WriteByte(r.Rsv)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Rsv: %s", err)
+	}
+
+	err = buf.WriteByte(r.ATyp)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write ATyp: %s", err)
+	}
+
+	var n int
+
+	switch r.ATyp {
 	case ATypIPv4:
 		// 4 Bytes
-		parts := strings.Split(r.DSTADDR, ".")
+		parts := strings.Split(r.DSTAddr, ".")
+		if len(parts) != LengthDSTAddrIPv4 {
+			return nil, fmt.Errorf("failed to split DSTAddr(IPv4): %s", err)
+		}
+
 		parts0, err := strconv.Atoi(parts[0])
 		if err != nil {
 			return nil, err
@@ -79,23 +101,32 @@ func (r *Request) Encode() ([]byte, error) {
 			return nil, err
 		}
 
-		buf.Write([]byte{byte(parts0), byte(parts1), byte(parts2), byte(parts3)})
+		n, err = buf.Write([]byte{byte(parts0), byte(parts1), byte(parts2), byte(parts3)})
+		if n != LengthDSTAddrIPv4 || err != nil {
+			return nil, fmt.Errorf("failed to write DSTAddr(IPv4): %s", err)
+		}
 	case ATypIPv6:
 		// 16 Bytes
 		// buf.Write(r.DSTAddr)
 		return nil, fmt.Errorf("unsupported ATypIPv6")
 	case ATypDOMAIN:
 		// Variable
-		LengthDSTDomain := len(r.DSTADDR)
+		LengthDSTDomain := len(r.DSTAddr)
 		buf.WriteByte(byte(LengthDSTDomain))
-		buf.WriteString(r.DSTADDR)
+		n, err = buf.WriteString(r.DSTAddr)
+		if n != LengthDSTDomain || err != nil {
+			return nil, fmt.Errorf("failed to write DSTAddr(DOMAIN): %s", err)
+		}
 	default:
-		return nil, fmt.Errorf("unsupported ATYP: %d", r.ATYP)
+		return nil, fmt.Errorf("unsupported ATYP: %d", r.ATyp)
 	}
 
-	bufPort := make([]byte, 2)
-	binary.BigEndian.PutUint16(bufPort, uint16(r.DSTPORT))
-	buf.Write(bufPort)
+	bufPort := make([]byte, LengthDSTPort)
+	binary.BigEndian.PutUint16(bufPort, uint16(r.DSTPort))
+	n, err = buf.Write(bufPort)
+	if n != LengthDSTPort || err != nil {
+		return nil, fmt.Errorf("failed to write DSTPort: %s", err)
+	}
 
 	return buf.Bytes(), nil
 }
@@ -110,7 +141,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthVER || err != nil {
 		return fmt.Errorf("failed to read ver:  %s", err)
 	}
-	r.VER = buf[0]
+	r.Ver = buf[0]
 
 	// CMD
 	buf = make([]byte, LengthCMD)
@@ -118,7 +149,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthCMD || err != nil {
 		return fmt.Errorf("failed to read CMD:  %s", err)
 	}
-	r.CMD = buf[0]
+	r.Cmd = buf[0]
 
 	// RSV
 	buf = make([]byte, LengthRSV)
@@ -126,7 +157,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthRSV || err != nil {
 		return fmt.Errorf("failed to read RSV:  %s", err)
 	}
-	r.RSV = buf[0]
+	r.Rsv = buf[0]
 
 	// ATYP
 	buf = make([]byte, LengthATYP)
@@ -134,10 +165,10 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthATYP || err != nil {
 		return fmt.Errorf("failed to read ATYP:  %s", err)
 	}
-	r.ATYP = buf[0]
+	r.ATyp = buf[0]
 
 	// DST_ADDR
-	switch r.ATYP {
+	switch r.ATyp {
 	case ATypIPv4:
 		// 4 Bytes
 		buf = make([]byte, LengthDSTAddrIPv4)
@@ -145,7 +176,7 @@ func (r *Request) Decode(raw []byte) error {
 		if n != LengthDSTAddrIPv4 || err != nil {
 			return fmt.Errorf("failed to read DST_ADDR(IPv4):  %s", err)
 		}
-		r.DSTADDR = fmt.Sprintf("%d.%d.%d.%d", buf[0], buf[1], buf[2], buf[3])
+		r.DSTAddr = fmt.Sprintf("%d.%d.%d.%d", buf[0], buf[1], buf[2], buf[3])
 	case ATypIPv6:
 		// // 16 Bytes
 		// buf = make([]byte, LengthDST_ADDR_IPv6)
@@ -167,9 +198,9 @@ func (r *Request) Decode(raw []byte) error {
 		if n != LengthDSTAddrDomain || err != nil {
 			return fmt.Errorf("failed to read DST_ADDR(IPv4):  %s", err)
 		}
-		r.DSTADDR = string(buf)
+		r.DSTAddr = string(buf)
 	default:
-		return fmt.Errorf("unsupported ATYP: %d", r.ATYP)
+		return fmt.Errorf("unsupported ATYP: %d", r.ATyp)
 	}
 
 	// DST_PORT
@@ -178,7 +209,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthDSTPort || err != nil {
 		return fmt.Errorf("failed to read DST_PORT:  %s", err)
 	}
-	r.DSTPORT = int(binary.BigEndian.Uint16(buf))
+	r.DSTPort = int(binary.BigEndian.Uint16(buf))
 
 	return nil
 }

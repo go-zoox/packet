@@ -59,11 +59,31 @@ type Request struct {
 // Encode encodes the data
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.ConnectionID)
-	buf.WriteString(r.TargetUserClientID)
-	buf.WriteString(r.TargetUserPairSignature)
-	buf.WriteByte(r.Network)
-	buf.WriteByte(r.ATyp)
+
+	n, err := buf.WriteString(r.ConnectionID)
+	if n != LengthConnectionID || err != nil {
+		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
+	}
+
+	n, err = buf.WriteString(r.TargetUserClientID)
+	if n != LengthTargetUserClientID || err != nil {
+		return nil, fmt.Errorf("failed to write TargetUserClientID: %s", err)
+	}
+
+	n, err = buf.WriteString(r.TargetUserPairSignature)
+	if n != LengthTargetUserPairSignature || err != nil {
+		return nil, fmt.Errorf("failed to write TargetUserPairSignature: %s", err)
+	}
+
+	err = buf.WriteByte(r.Network)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Network: %s", err)
+	}
+
+	err = buf.WriteByte(r.ATyp)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write ATyp: %s", err)
+	}
 
 	// switch a.ATyp {
 	// case ATYP_IPv4:
@@ -77,12 +97,19 @@ func (r *Request) Encode() ([]byte, error) {
 	// 	}
 	// }
 
-	DSTAddrLength := len(r.DSTAddr)
-	buf.WriteByte(byte(DSTAddrLength))
-	buf.WriteString(r.DSTAddr)
-	portBytes := make([]byte, 2)
+	LengthDSTAddr := len(r.DSTAddr)
+	buf.WriteByte(byte(LengthDSTAddr))
+	n, err = buf.WriteString(r.DSTAddr)
+	if n != LengthDSTAddr || err != nil {
+		return nil, fmt.Errorf("failed to write DSTAddr: %s", err)
+	}
+
+	portBytes := make([]byte, LengthDSTPort)
 	binary.BigEndian.PutUint16(portBytes, r.DSTPort)
-	buf.Write(portBytes)
+	n, err = buf.Write(portBytes)
+	if n != LengthDSTPort || err != nil {
+		return nil, fmt.Errorf("failed to write DSTPort: %s", err)
+	}
 
 	return buf.Bytes(), nil
 }

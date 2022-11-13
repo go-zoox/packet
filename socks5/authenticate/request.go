@@ -16,17 +16,31 @@ const (
 
 // Request is the request for authenticate
 type Request struct {
-	VER      byte
-	NMETHODS byte
-	METHODS  []byte
+	Ver      byte
+	NMethods byte
+	Methods  []byte
 }
 
 // Encode encodes the request
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
-	buf.WriteByte(r.VER)
-	buf.WriteByte(r.NMETHODS)
-	buf.Write(r.METHODS)
+
+	err := buf.WriteByte(r.Ver)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Ver: %s", err)
+	}
+
+	err = buf.WriteByte(r.NMethods)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write NMethods: %s", err)
+	}
+
+	var n int
+	n, err = buf.Write(r.Methods)
+	if n != int(r.NMethods) || err != nil {
+		return nil, fmt.Errorf("failed to write Methods: %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 
@@ -40,7 +54,7 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthVer || err != nil {
 		return fmt.Errorf("failed to read ver:  %s", err)
 	}
-	r.VER = buf[0]
+	r.Ver = buf[0]
 
 	// NMETHODS
 	buf = make([]byte, LengthNMethods)
@@ -48,16 +62,16 @@ func (r *Request) Decode(raw []byte) error {
 	if n != LengthNMethods || err != nil {
 		return fmt.Errorf("failed to read nmethods:  %s", err)
 	}
-	r.NMETHODS = buf[0]
+	r.NMethods = buf[0]
 
 	// METHODS
-	LengthMethods := int(r.NMETHODS)
+	LengthMethods := int(r.NMethods)
 	buf = make([]byte, LengthMethods)
 	n, err = io.ReadFull(reader, buf)
 	if n != LengthMethods || err != nil {
 		return fmt.Errorf("failed to read METHODS:  %s", err)
 	}
-	r.METHODS = buf
+	r.Methods = buf
 
 	return nil
 }

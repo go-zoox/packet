@@ -4,8 +4,8 @@ import "testing"
 
 func TestResponseEncodeDecode(t *testing.T) {
 	packet := &Response{
-		VER:    0x05,
-		METHOD: 0x01,
+		Ver:    0x05,
+		Method: 0x01,
 	}
 
 	encoded, err := packet.Encode()
@@ -18,11 +18,11 @@ func TestResponseEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to decode %s", err)
 	}
 
-	if decoded.VER != packet.VER {
-		t.Fatalf("VER not match, expect %d, but got %d", packet.VER, decoded.VER)
+	if decoded.Ver != packet.Ver {
+		t.Fatalf("VER not match, expect %d, but got %d", packet.Ver, decoded.Ver)
 	}
 
-	if decoded.METHOD != packet.METHOD {
-		t.Fatalf("METHOD not match, expect %d, but got %d", packet.METHOD, decoded.METHOD)
+	if decoded.Method != packet.Method {
+		t.Fatalf("METHOD not match, expect %d, but got %d", packet.Method, decoded.Method)
 	}
 }

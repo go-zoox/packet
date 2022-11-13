@@ -4,7 +4,7 @@ import "testing"
 
 func TestEncodeDecode(t *testing.T) {
 	packet := &Forward{
-		DATA: []byte("hello, Zero"),
+		Data: []byte("hello, Zero"),
 	}
 
 	encoded, err := packet.Encode()
@@ -17,8 +17,8 @@ func TestEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to decode %s", err)
 	}
 
-	if string(decoded.DATA) != string(packet.DATA) {
-		t.Fatalf("DATA not match, expect %s, but got %s", packet.DATA, decoded.DATA)
+	if string(decoded.Data) != string(packet.Data) {
+		t.Fatalf("DATA not match, expect %s, but got %s", packet.Data, decoded.Data)
 	}
 
 }

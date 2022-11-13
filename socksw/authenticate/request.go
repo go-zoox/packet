@@ -34,10 +34,27 @@ type Request struct {
 // Encode encodes the request
 func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.UserClientID)
-	buf.WriteString(r.Timestamp)
-	buf.WriteString(r.Nonce)
-	buf.WriteString(r.Signature)
+
+	n, err := buf.WriteString(r.UserClientID)
+	if n != LengthUserClientID || err != nil {
+		return nil, fmt.Errorf("failed to write user client id:  %s", err)
+	}
+
+	n, err = buf.WriteString(r.Timestamp)
+	if n != LengthTimestamp || err != nil {
+		return nil, fmt.Errorf("failed to write timestamp:  %s", err)
+	}
+
+	n, err = buf.WriteString(r.Nonce)
+	if n != LengthNonce || err != nil {
+		return nil, fmt.Errorf("failed to write nonce:  %s", err)
+	}
+
+	n, err = buf.WriteString(r.Signature)
+	if n != LengthSignature || err != nil {
+		return nil, fmt.Errorf("failed to write signature:  %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 

@@ -25,7 +25,12 @@ type Close struct {
 // Encode encodes the data
 func (r *Close) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.ConnectionID)
+
+	n, err := buf.WriteString(r.ConnectionID)
+	if n != LengthConnectionID || err != nil {
+		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 

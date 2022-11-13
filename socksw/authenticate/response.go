@@ -19,15 +19,24 @@ const (
 
 // Response is the response for authenticate
 type Response struct {
-	STATUS  uint8
-	MESSAGE string
+	Status  uint8
+	Message string
 }
 
 // Encode encodes the response for authenticate
 func (r *Response) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteByte(r.STATUS)
-	buf.WriteString(r.MESSAGE)
+
+	err := buf.WriteByte(r.Status)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Status:  %s", err)
+	}
+
+	_, err = buf.WriteString(r.Message)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Message:  %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 
@@ -41,14 +50,14 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthStatus || err != nil {
 		return fmt.Errorf("failed to read status:  %s", err)
 	}
-	r.STATUS = uint8(buf[0])
+	r.Status = uint8(buf[0])
 
 	// Message
 	buf, err = io.ReadAll(reader)
 	if err != nil {
 		return fmt.Errorf("failed to read message:  %s", err)
 	}
-	r.MESSAGE = string(buf)
+	r.Message = string(buf)
 
 	return nil
 }

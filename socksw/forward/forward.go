@@ -26,8 +26,17 @@ type Forward struct {
 // Encode encodes the forward data
 func (r *Forward) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.ConnectionID)
-	buf.Write(r.Data)
+
+	n, err := buf.WriteString(r.ConnectionID)
+	if n != LengthConnectionID || err != nil {
+		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
+	}
+
+	_, err = buf.Write(r.Data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Data: %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 

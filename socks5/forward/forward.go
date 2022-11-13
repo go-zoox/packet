@@ -8,12 +8,12 @@ import (
 
 // Forward ...
 type Forward struct {
-	DATA []byte
+	Data []byte
 }
 
 // Encode encodes the forward data
 func (r *Forward) Encode() ([]byte, error) {
-	return r.DATA, nil
+	return r.Data, nil
 }
 
 // Decode decodes the forward data
@@ -21,7 +21,7 @@ func (r *Forward) Decode(raw []byte) (err error) {
 	reader := bytes.NewReader(raw)
 
 	// DATA
-	r.DATA, err = io.ReadAll(reader)
+	r.Data, err = io.ReadAll(reader)
 	if err != nil {
 		return fmt.Errorf("failed to read DATA:  %s", err)
 	}

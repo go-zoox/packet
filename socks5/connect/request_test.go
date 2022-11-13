@@ -4,12 +4,12 @@ import "testing"
 
 func TestRequestEncodeDecode(t *testing.T) {
 	packet := &Request{
-		VER:     0x05,
-		CMD:     0x01,
-		RSV:     0x00,
-		ATYP:    0x01,
-		DSTADDR: "127.0.0.1",
-		DSTPORT: 8080,
+		Ver:     0x05,
+		Cmd:     0x01,
+		Rsv:     0x00,
+		ATyp:    0x01,
+		DSTAddr: "127.0.0.1",
+		DSTPort: 8080,
 	}
 
 	encoded, err := packet.Encode()
@@ -22,27 +22,27 @@ func TestRequestEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to decode %s", err)
 	}
 
-	if decoded.VER != packet.VER {
-		t.Fatalf("VER not match, expect %d, but got %d", packet.VER, decoded.VER)
+	if decoded.Ver != packet.Ver {
+		t.Fatalf("VER not match, expect %d, but got %d", packet.Ver, decoded.Ver)
 	}
 
-	if decoded.CMD != packet.CMD {
-		t.Fatalf("CMD not match, expect %d, but got %d", packet.CMD, decoded.CMD)
+	if decoded.Cmd != packet.Cmd {
+		t.Fatalf("CMD not match, expect %d, but got %d", packet.Cmd, decoded.Cmd)
 	}
 
-	if decoded.RSV != packet.RSV {
-		t.Fatalf("RSV not match, expect %d, but got %d", packet.RSV, decoded.RSV)
+	if decoded.Rsv != packet.Rsv {
+		t.Fatalf("RSV not match, expect %d, but got %d", packet.Rsv, decoded.Rsv)
 	}
 
-	if decoded.ATYP != packet.ATYP {
-		t.Fatalf("ATYP not match, expect %d, but got %d", packet.ATYP, decoded.ATYP)
+	if decoded.ATyp != packet.ATyp {
+		t.Fatalf("ATYP not match, expect %d, but got %d", packet.ATyp, decoded.ATyp)
 	}
 
-	if decoded.DSTADDR != packet.DSTADDR {
-		t.Fatalf("DST_ADDR not match, expect %s, but got %s", packet.DSTADDR, decoded.DSTADDR)
+	if decoded.DSTAddr != packet.DSTAddr {
+		t.Fatalf("DST_ADDR not match, expect %s, but got %s", packet.DSTAddr, decoded.DSTAddr)
 	}
 
-	if decoded.DSTPORT != packet.DSTPORT {
-		t.Fatalf("DST_PORT not match, expect %d, but got %d", packet.DSTPORT, decoded.DSTPORT)
+	if decoded.DSTPort != packet.DSTPort {
+		t.Fatalf("DST_PORT not match, expect %d, but got %d", packet.DSTPort, decoded.DSTPort)
 	}
 }

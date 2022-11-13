@@ -35,11 +35,32 @@ type Base struct {
 // Encode encodes the base data
 func (r *Base) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
-	buf.WriteByte(r.Ver)
-	buf.WriteByte(r.Cmd)
-	buf.WriteByte(r.Crypto)
-	buf.WriteByte(r.Compression)
-	buf.Write(r.Data)
+
+	err := buf.WriteByte(r.Ver)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Ver: %s", err)
+	}
+
+	err = buf.WriteByte(r.Cmd)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Cmd: %s", err)
+	}
+
+	err = buf.WriteByte(r.Crypto)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Crypto: %s", err)
+	}
+
+	err = buf.WriteByte(r.Compression)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Compression: %s", err)
+	}
+
+	_, err = buf.Write(r.Data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Data: %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 

@@ -27,9 +27,22 @@ type Response struct {
 // Encode encodes the data
 func (r *Response) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString(r.ConnectionID)
-	buf.WriteByte(r.Status)
-	buf.WriteString(r.Message)
+
+	n, err := buf.WriteString(r.ConnectionID)
+	if n != LengthConnectionID || err != nil {
+		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
+	}
+
+	err = buf.WriteByte(r.Status)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Status: %s", err)
+	}
+
+	_, err = buf.WriteString(r.Message)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Message: %s", err)
+	}
+
 	return buf.Bytes(), nil
 }
 

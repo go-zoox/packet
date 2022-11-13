@@ -4,9 +4,9 @@ import "testing"
 
 func TestRequestEncodeDecode(t *testing.T) {
 	packet := &Request{
-		VER:      0x05,
-		NMETHODS: 0x02,
-		METHODS:  []byte{0x01, 0x02},
+		Ver:      0x05,
+		NMethods: 0x02,
+		Methods:  []byte{0x01, 0x02},
 	}
 
 	encoded, err := packet.Encode()
@@ -19,15 +19,15 @@ func TestRequestEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to decode %s", err)
 	}
 
-	if decoded.VER != packet.VER {
-		t.Fatalf("VER not match, expect %d, but got %d", packet.VER, decoded.VER)
+	if decoded.Ver != packet.Ver {
+		t.Fatalf("VER not match, expect %d, but got %d", packet.Ver, decoded.Ver)
 	}
 
-	if decoded.NMETHODS != packet.NMETHODS {
-		t.Fatalf("NMETHODS not match, expect %d, but got %d", packet.NMETHODS, decoded.NMETHODS)
+	if decoded.NMethods != packet.NMethods {
+		t.Fatalf("NMETHODS not match, expect %d, but got %d", packet.NMethods, decoded.NMethods)
 	}
 
-	if string(decoded.METHODS) != string(packet.METHODS) {
-		t.Fatalf("METHODS not match, expect %s, but got %s", packet.METHODS, decoded.METHODS)
+	if string(decoded.Methods) != string(packet.Methods) {
+		t.Fatalf("METHODS not match, expect %s, but got %s", packet.Methods, decoded.Methods)
 	}
 }

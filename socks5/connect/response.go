@@ -29,26 +29,42 @@ const (
 
 // Response is the response for connect
 type Response struct {
-	VER      uint8
-	REP      uint8
-	RSV      uint8
-	ATYP     uint8
-	BINDAddr string
-	BINDPort int
+	Ver      uint8
+	Rep      uint8
+	Rsv      uint8
+	ATyp     uint8
+	BindAddr string
+	BindPort int
 }
 
 // Encode encodes the response
 func (r *Response) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
-	buf.WriteByte(r.VER)
-	buf.WriteByte(r.REP)
-	buf.WriteByte(r.RSV)
-	buf.WriteByte(r.ATYP)
 
-	switch r.ATYP {
+	err := buf.WriteByte(r.Ver)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Ver: %s", err)
+	}
+
+	err = buf.WriteByte(r.Rep)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Rep: %s", err)
+	}
+
+	err = buf.WriteByte(r.Rsv)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write Rsv: %s", err)
+	}
+
+	err = buf.WriteByte(r.ATyp)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write ATyp: %s", err)
+	}
+
+	switch r.ATyp {
 	case ATypIPv4:
 		// 4 Bytes
-		parts := strings.Split(r.BINDAddr, ".")
+		parts := strings.Split(r.BindAddr, ".")
 		parts0, err := strconv.Atoi(parts[0])
 		if err != nil {
 			return nil, err
@@ -73,15 +89,15 @@ func (r *Response) Encode() ([]byte, error) {
 		return nil, fmt.Errorf("unsupported ATypIPv6")
 	case ATypDOMAIN:
 		// Variable
-		LengthBindDomain := len(r.BINDAddr)
+		LengthBindDomain := len(r.BindAddr)
 		buf.WriteByte(byte(LengthBindDomain))
-		buf.WriteString(r.BINDAddr)
+		buf.WriteString(r.BindAddr)
 	default:
-		return nil, fmt.Errorf("unsupported ATYP: %d", r.ATYP)
+		return nil, fmt.Errorf("unsupported ATYP: %d", r.ATyp)
 	}
 
 	bufPort := make([]byte, 2)
-	binary.BigEndian.PutUint16(bufPort, uint16(r.BINDPort))
+	binary.BigEndian.PutUint16(bufPort, uint16(r.BindPort))
 	buf.Write(bufPort)
 
 	return buf.Bytes(), nil
@@ -97,7 +113,7 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthVER || err != nil {
 		return fmt.Errorf("failed to read ver:  %s", err)
 	}
-	r.VER = buf[0]
+	r.Ver = buf[0]
 
 	// REP
 	buf = make([]byte, LengthREP)
@@ -105,7 +121,7 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthREP || err != nil {
 		return fmt.Errorf("failed to read REP:  %s", err)
 	}
-	r.REP = buf[0]
+	r.Rep = buf[0]
 
 	// RSV
 	buf = make([]byte, LengthRSV)
@@ -113,7 +129,7 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthRSV || err != nil {
 		return fmt.Errorf("failed to read RSV:  %s", err)
 	}
-	r.RSV = buf[0]
+	r.Rsv = buf[0]
 
 	// ATYP
 	buf = make([]byte, LengthATYP)
@@ -121,10 +137,10 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthATYP || err != nil {
 		return fmt.Errorf("failed to read ATYP:  %s", err)
 	}
-	r.ATYP = buf[0]
+	r.ATyp = buf[0]
 
 	// BIND_ADDR
-	switch r.ATYP {
+	switch r.ATyp {
 	case ATypIPv4:
 		// 4 Bytes
 		buf = make([]byte, LengthBindAddrIPv4)
@@ -132,7 +148,7 @@ func (r *Response) Decode(raw []byte) error {
 		if n != LengthBindAddrIPv4 || err != nil {
 			return fmt.Errorf("failed to read BIND_ADDR(IPv4):  %s", err)
 		}
-		r.BINDAddr = fmt.Sprintf("%d.%d.%d.%d", buf[0], buf[1], buf[2], buf[3])
+		r.BindAddr = fmt.Sprintf("%d.%d.%d.%d", buf[0], buf[1], buf[2], buf[3])
 	case ATypIPv6:
 		// // 16 Bytes
 		// buf = make([]byte, LengthBIND_ADDR_IPv6)
@@ -154,9 +170,9 @@ func (r *Response) Decode(raw []byte) error {
 		if n != LengthBindAddrDomain || err != nil {
 			return fmt.Errorf("failed to read BIND_ADDR(IPv4):  %s", err)
 		}
-		r.BINDAddr = string(buf)
+		r.BindAddr = string(buf)
 	default:
-		return fmt.Errorf("unsupported ATYP: %d", r.ATYP)
+		return fmt.Errorf("unsupported ATYP: %d", r.ATyp)
 	}
 
 	// BIND_PORT
@@ -165,7 +181,7 @@ func (r *Response) Decode(raw []byte) error {
 	if n != LengthBindPort || err != nil {
 		return fmt.Errorf("failed to read BIND_PORT:  %s", err)
 	}
-	r.BINDPort = int(binary.BigEndian.Uint16(buf))
+	r.BindPort = int(binary.BigEndian.Uint16(buf))
 
 	return nil
 }
