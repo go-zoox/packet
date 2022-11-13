@@ -19,5 +19,15 @@ go get -u github.com/go-zoox/packet
 // See test cases
 ```
 
+## Protocol
+* [x] Socks5      - [RFC](https://www.rfc-editor.org/rfc/rfc1928)
+* [x] SocksW 
+* [ ] VMess       - [SPEC](https://github.com/v2ray/manual/blob/master/eng_en/protocols/vmess.md)
+* [ ] mKCP        - [SPEC](https://github.com/v2ray/manual/blob/master/eng_en/protocols/mkcp.md)
+* [ ] MUXCOOL     - [SPEC](https://github.com/v2ray/manual/blob/master/eng_en/protocols/muxcool.md)
+* [ ] Shadowsocks - [SPEC](https://www.ichenxiaoyu.com/ss/)
+* [ ] Socks4      - [RFC](https://www.openssh.com/txt/socks4.protocol)
+* [ ] Socks6      - [RFC](https://datatracker.ietf.org/doc/html/draft-olteanu-intarea-socks-6)
+
 ## License
 GoZoox is released under the [MIT License](./LICENSE).
