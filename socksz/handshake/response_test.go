@@ -1,10 +1,15 @@
 package handshake
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/go-zoox/packet/socksz"
+	"github.com/go-zoox/random"
+)
 
 func TestResponseEncodeDecode(t *testing.T) {
 	packet := &Response{
-		ConnectionID: "012345678901234567890",
+		ConnectionID: random.String(socksz.LengthConnectionID),
 		Status:       0x01,
 		Message:      "hello world",
 	}

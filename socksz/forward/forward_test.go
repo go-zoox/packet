@@ -1,10 +1,15 @@
 package forward
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/go-zoox/packet/socksz"
+	"github.com/go-zoox/random"
+)
 
 func TestEncodeDecode(t *testing.T) {
 	packet := &Forward{
-		ConnectionID: "20ed2884bde9d7565dbf1",
+		ConnectionID: random.String(socksz.LengthConnectionID),
 		Data:         []byte("hello world"),
 	}
 
