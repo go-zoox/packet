@@ -21,7 +21,7 @@ go get -u github.com/go-zoox/packet
 
 ## Protocol
 * [x] Socks5      - [RFC](https://www.rfc-editor.org/rfc/rfc1928)
-* [x] SocksW 
+* [x] SocksZ 
 * [ ] VMess       - [SPEC](https://github.com/v2ray/manual/blob/master/eng_en/protocols/vmess.md)
 * [ ] mKCP        - [SPEC](https://github.com/v2ray/manual/blob/master/eng_en/protocols/mkcp.md)
 * [ ] MUXCOOL     - [SPEC](https://github.com/v2ray/manual/blob/master/eng_en/protocols/muxcool.md)

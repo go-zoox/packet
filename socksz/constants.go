@@ -6,18 +6,18 @@ const (
 )
 
 const (
-	// CommandAUTHENTICATE client <-> server
-	CommandAUTHENTICATE = 0x01
-	// CommandHANDSHAKERequest client <-server-> client
-	CommandHANDSHAKERequest = 0x02
-	// CommandHANDSHAKEResponse client <-server-> client
-	CommandHANDSHAKEResponse = 0x03
-	// CommandFORWARD client <-> client
-	CommandFORWARD = 0x04
-	// CommandCLOSE client <-> client
-	CommandCLOSE = 0x05
-	// CommandBIND client <-> server
-	CommandBIND = 0x06
+	// CommandAuthenticate client <-> server
+	CommandAuthenticate = 0x01
+	// CommandHandshakeRequest client <-server-> client
+	CommandHandshakeRequest = 0x02
+	// CommandHandshakeResponse client <-server-> client
+	CommandHandshakeResponse = 0x03
+	// CommandForward client <-> client
+	CommandForward = 0x04
+	// CommandClose client <-> client
+	CommandClose = 0x05
+	// CommandBind client <-> server
+	CommandBind = 0x06
 )
 
 const (
