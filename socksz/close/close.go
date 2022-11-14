@@ -12,7 +12,7 @@ import (
 //
 // CONNECTION CLOSE DATA:
 // request:  CONNECTION_ID
-//                 21
+//                 13
 
 // Close ...
 type Close struct {

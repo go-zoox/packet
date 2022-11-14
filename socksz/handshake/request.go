@@ -13,7 +13,7 @@ import (
 //
 // Handshake DATA:
 // request:  CONNECTION_ID | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_SIGNATURE |  NETWORK   | ATYP                 | DST.ADDR 							 | DST.PORT
-//					       21      |       10              |					64                | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
+//					       13      |       10              |					64                | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
 // response: STATUS | MESSAGE
 //            1     |  -
 

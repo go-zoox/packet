@@ -12,7 +12,7 @@ import (
 //
 // TRANSMISIION DATA:
 // request:  CONNECTION_ID | DATA
-//					       21      |  -
+//					       13      |  -
 
 // Forward ...
 type Forward struct {

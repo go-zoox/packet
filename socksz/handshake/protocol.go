@@ -6,7 +6,7 @@ package handshake
 
 // Auth Request DATA:
 // 	CONNECTION_ID | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_SIGNATURE | NETWORK | ATYP | DST.ADDR  | DST.PORT
-// 	      21      |       10              |					    64             |    1    |   1  |  Variable |    2
+// 	      13      |       10              |					    64             |    1    |   1  |  Variable |    2
 //
 // 	CONNECTION_ID 							- 连接 ID
 //  TARGET_USER_CLIENT_ID 			- 目标用户 Client ID

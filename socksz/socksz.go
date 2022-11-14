@@ -49,12 +49,12 @@ const (
 
 // Handshake DATA:
 // request:  CONNECTION_ID | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_KEY |  NETWORK   | ATYP                 | DST.ADDR 							 | DST.PORT
-//					       21      |       10              |					10          | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
+//					       13      |       10              |					10          | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
 // response: CONNECTION_ID | STATUS | MESSAGE
-//                 21      |  1     |  -
+//                 13      |  1     |  -
 const (
 	// LengthConnectionID ...
-	LengthConnectionID = 21
+	LengthConnectionID = 13
 	// LengthTargetUserClientID ...
 	LengthTargetUserClientID = 10
 	// LengthTargetUserPairSignature ...
@@ -75,8 +75,8 @@ const (
 
 // CONNECTION TRANSMISIION DATA:
 // request:  CONNECTION_ID | DATA
-//					       21      |  -
+//					       13      |  -
 
 // CONNECTION CLOSE:
 // request:  CONNECTION_ID
-//                 21
+//                 13
