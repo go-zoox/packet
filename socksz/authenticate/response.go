@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+
+	"github.com/go-zoox/packet/socksz"
 )
 
 // DATA Protocol:
@@ -11,11 +13,6 @@ import (
 // AUTHENTICATE DATA:
 // response: STATUS | MESSAGE
 //            1     |  -
-
-const (
-	// LengthStatus is the byte length of STATUS
-	LengthStatus = 1
-)
 
 // Response is the response for authenticate
 type Response struct {
@@ -45,9 +42,9 @@ func (r *Response) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// STATUS
-	buf := make([]byte, LengthStatus)
+	buf := make([]byte, socksz.LengthStatus)
 	n, err := io.ReadFull(reader, buf)
-	if n != LengthStatus || err != nil {
+	if n != socksz.LengthStatus || err != nil {
 		return fmt.Errorf("failed to read status:  %s", err)
 	}
 	r.Status = uint8(buf[0])

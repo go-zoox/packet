@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+
+	"github.com/go-zoox/packet/socksz"
 )
 
 // DATA Protocol:
@@ -11,17 +13,6 @@ import (
 // CONNECTION CLOSE DATA:
 //  VER | CMD | CRYPTO | COMPRESS | DATA
 //   1  |  1  |  1     |   1      | -
-
-const (
-	// LengthVer ...
-	LengthVer = 1
-	// LengthCmd ...
-	LengthCmd = 1
-	// LengthCrypto ...
-	LengthCrypto = 1
-	// LengthCompression ...
-	LengthCompression = 1
-)
 
 // Base ...
 type Base struct {
@@ -69,33 +60,33 @@ func (r *Base) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// VER
-	buf := make([]byte, LengthVer)
+	buf := make([]byte, socksz.LengthVer)
 	n, err := io.ReadFull(reader, buf)
-	if n != LengthVer || err != nil {
+	if n != socksz.LengthVer || err != nil {
 		return fmt.Errorf("failed to read VER:  %s", err)
 	}
 	r.Ver = uint8(buf[0])
 
 	// CMD
-	buf = make([]byte, LengthCmd)
+	buf = make([]byte, socksz.LengthCmd)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthCmd || err != nil {
+	if n != socksz.LengthCmd || err != nil {
 		return fmt.Errorf("failed to read CMD:  %s", err)
 	}
 	r.Cmd = uint8(buf[0])
 
 	// CRYPTO
-	buf = make([]byte, LengthCrypto)
+	buf = make([]byte, socksz.LengthCrypto)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthCrypto || err != nil {
+	if n != socksz.LengthCrypto || err != nil {
 		return fmt.Errorf("failed to read CRYPTO:  %s", err)
 	}
 	r.Crypto = uint8(buf[0])
 
 	// COMPRESSION
-	buf = make([]byte, LengthCompression)
+	buf = make([]byte, socksz.LengthCompression)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthCompression || err != nil {
+	if n != socksz.LengthCompression || err != nil {
 		return fmt.Errorf("failed to read COMPRESSION:  %s", err)
 	}
 	r.Compression = uint8(buf[0])

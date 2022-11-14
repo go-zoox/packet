@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+
+	"github.com/go-zoox/packet/socksz"
 )
 
 // DATA Protocol:
@@ -11,11 +13,6 @@ import (
 // AUTHENTICATE DATA:
 // response: STATUS | MESSAGE
 //            1     |  -
-
-const (
-	// LengthStatus ...
-	LengthStatus = 1
-)
 
 // Response represents the response
 type Response struct {
@@ -29,7 +26,7 @@ func (r *Response) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
 
 	n, err := buf.WriteString(r.ConnectionID)
-	if n != LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID || err != nil {
 		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
 	}
 
@@ -51,17 +48,17 @@ func (r *Response) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
-	buf := make([]byte, LengthConnectionID)
+	buf := make([]byte, socksz.LengthConnectionID)
 	n, err := io.ReadFull(reader, buf)
-	if n != LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID || err != nil {
 		return fmt.Errorf("failed to read id:  %s", err)
 	}
 	r.ConnectionID = string(buf)
 
 	// STATUS
-	buf = make([]byte, LengthStatus)
+	buf = make([]byte, socksz.LengthStatus)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthStatus || err != nil {
+	if n != socksz.LengthStatus || err != nil {
 		return fmt.Errorf("failed to read status:  %s", err)
 	}
 	r.Status = uint8(buf[0])

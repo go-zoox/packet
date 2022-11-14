@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+
+	"github.com/go-zoox/packet/socksz"
 )
 
 // DATA Protocol:
@@ -16,22 +18,6 @@ import (
 //            1     |  -
 
 const (
-	// LengthConnectionID ...
-	LengthConnectionID = 21
-	// LengthTargetUserClientID ...
-	LengthTargetUserClientID = 10
-	// LengthTargetUserPairSignature ...
-	LengthTargetUserPairSignature = 64
-	// LengthNetwork ...
-	LengthNetwork = 1
-	// LengthATyp ...
-	LengthATyp = 1
-
-	// LengthDSTAddr = 4
-
-	// LengthDSTPort ...
-	LengthDSTPort = 2
-
 	// ATypIPv4 ...
 	ATypIPv4 = 0x01
 	// ATypIPv6 ...
@@ -61,17 +47,17 @@ func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
 
 	n, err := buf.WriteString(r.ConnectionID)
-	if n != LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID || err != nil {
 		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
 	}
 
 	n, err = buf.WriteString(r.TargetUserClientID)
-	if n != LengthTargetUserClientID || err != nil {
+	if n != socksz.LengthTargetUserClientID || err != nil {
 		return nil, fmt.Errorf("failed to write TargetUserClientID: %s", err)
 	}
 
 	n, err = buf.WriteString(r.TargetUserPairSignature)
-	if n != LengthTargetUserPairSignature || err != nil {
+	if n != socksz.LengthTargetUserPairSignature || err != nil {
 		return nil, fmt.Errorf("failed to write TargetUserPairSignature: %s", err)
 	}
 
@@ -104,10 +90,10 @@ func (r *Request) Encode() ([]byte, error) {
 		return nil, fmt.Errorf("failed to write DSTAddr: %s", err)
 	}
 
-	portBytes := make([]byte, LengthDSTPort)
+	portBytes := make([]byte, socksz.LengthDSTPort)
 	binary.BigEndian.PutUint16(portBytes, r.DSTPort)
 	n, err = buf.Write(portBytes)
-	if n != LengthDSTPort || err != nil {
+	if n != socksz.LengthDSTPort || err != nil {
 		return nil, fmt.Errorf("failed to write DSTPort: %s", err)
 	}
 
@@ -119,41 +105,41 @@ func (r *Request) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
-	buf := make([]byte, LengthConnectionID)
+	buf := make([]byte, socksz.LengthConnectionID)
 	n, err := io.ReadFull(reader, buf)
-	if n != LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID || err != nil {
 		return fmt.Errorf("failed to read connection id:  %s", err)
 	}
 	r.ConnectionID = string(buf)
 
 	// TARGET_USER_CLIENT_ID
-	buf = make([]byte, LengthTargetUserClientID)
+	buf = make([]byte, socksz.LengthTargetUserClientID)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthTargetUserClientID || err != nil {
+	if n != socksz.LengthTargetUserClientID || err != nil {
 		return fmt.Errorf("failed to read target user client id:  %s", err)
 	}
 	r.TargetUserClientID = string(buf)
 
 	// TARGET_USER_PAIR_KEY
-	buf = make([]byte, LengthTargetUserPairSignature)
+	buf = make([]byte, socksz.LengthTargetUserPairSignature)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthTargetUserPairSignature || err != nil {
+	if n != socksz.LengthTargetUserPairSignature || err != nil {
 		return fmt.Errorf("failed to read target user pair key:  %s", err)
 	}
 	r.TargetUserPairSignature = string(buf)
 
 	// NETWORK
-	buf = make([]byte, LengthNetwork)
+	buf = make([]byte, socksz.LengthNetwork)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthNetwork || err != nil {
+	if n != socksz.LengthNetwork || err != nil {
 		return fmt.Errorf("failed to read signature:  %s", err)
 	}
 	r.Network = uint8(buf[0])
 
 	// ATYP
-	buf = make([]byte, LengthATyp)
+	buf = make([]byte, socksz.LengthATyp)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthATyp || err != nil {
+	if n != socksz.LengthATyp || err != nil {
 		return fmt.Errorf("failed to read atyp:  %s", err)
 	}
 	r.ATyp = uint8(buf[0])
@@ -162,7 +148,7 @@ func (r *Request) Decode(raw []byte) error {
 	buf = make([]byte, 1)
 	n, err = io.ReadFull(reader, buf)
 	if n != 1 || err != nil {
-		return fmt.Errorf("failed to read dst addr length:  %s", err)
+		return fmt.Errorf("failed to read dst addr socksz.length:  %s", err)
 	}
 	dstAddrLength := int(buf[0])
 	buf = make([]byte, dstAddrLength)
@@ -173,9 +159,9 @@ func (r *Request) Decode(raw []byte) error {
 	r.DSTAddr = string(buf)
 
 	// DSTAddrPort
-	buf = make([]byte, LengthDSTPort)
+	buf = make([]byte, socksz.LengthDSTPort)
 	n, err = io.ReadFull(reader, buf)
-	if n != LengthDSTPort || err != nil {
+	if n != socksz.LengthDSTPort || err != nil {
 		return fmt.Errorf("failed to read atyp:  %s", err)
 	}
 	r.DSTPort = binary.BigEndian.Uint16(buf[:2])

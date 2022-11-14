@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+
+	"github.com/go-zoox/packet/socksz"
 )
 
 // DATA Protocol:
@@ -11,11 +13,6 @@ import (
 // CONNECTION CLOSE DATA:
 // request:  CONNECTION_ID
 //                 21
-
-const (
-	// LengthConnectionID ...
-	LengthConnectionID = 21
-)
 
 // Close ...
 type Close struct {
@@ -27,7 +24,7 @@ func (r *Close) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
 
 	n, err := buf.WriteString(r.ConnectionID)
-	if n != LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID || err != nil {
 		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
 	}
 
@@ -39,9 +36,9 @@ func (r *Close) Decode(raw []byte) error {
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
-	buf := make([]byte, LengthConnectionID)
+	buf := make([]byte, socksz.LengthConnectionID)
 	n, err := io.ReadFull(reader, buf)
-	if n != LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID || err != nil {
 		return fmt.Errorf("failed to read connection id:  %s", err)
 	}
 	r.ConnectionID = string(buf)
