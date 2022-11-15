@@ -28,10 +28,6 @@ type Request struct {
 
 // Encode encodes the request
 func (r *Request) Encode() ([]byte, error) {
-	if r.Secret == "" {
-		return nil, fmt.Errorf("secret is required")
-	}
-
 	// generates start
 	if r.Nonce == "" {
 		r.Nonce = random.String(socksz.LengthNonce)
@@ -103,6 +99,14 @@ func (r *Request) Decode(raw []byte) error {
 		return fmt.Errorf("failed to read signature:  %s", err)
 	}
 	r.Signature = string(buf)
+
+	return nil
+}
+
+func (r *Request) Verify() error {
+	if r.Secret == "" {
+		return fmt.Errorf("secret is required")
+	}
 
 	// verify signature
 	if r.Signature != hmac.Sha256(fmt.Sprintf("%s_%s_%s", r.UserClientID, r.Timestamp, r.Nonce), r.Secret, "hex") {

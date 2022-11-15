@@ -113,10 +113,6 @@ func (r *Request) Encode() ([]byte, error) {
 
 // Decode decodes the data
 func (r *Request) Decode(raw []byte) error {
-	if r.Secret == "" {
-		return fmt.Errorf("secret is required")
-	}
-
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
@@ -180,6 +176,14 @@ func (r *Request) Decode(raw []byte) error {
 		return fmt.Errorf("failed to read atyp:  %s", err)
 	}
 	r.DSTPort = binary.BigEndian.Uint16(buf[:2])
+
+	return nil
+}
+
+func (r *Request) Verify() error {
+	if r.Secret == "" {
+		return fmt.Errorf("secret is required")
+	}
 
 	// verify
 	if r.TargetUserPairSignature != hmac.Sha256(fmt.Sprintf("%s_%s", r.ConnectionID, r.TargetUserClientID), r.Secret) {
