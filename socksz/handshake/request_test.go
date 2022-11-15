@@ -8,14 +8,17 @@ import (
 )
 
 func TestRequestEncodeDecode(t *testing.T) {
+	secret := "666"
 	packet := &Request{
-		ConnectionID:            random.String(socksz.LengthConnectionID),
-		TargetUserClientID:      "b0a501e947",
-		TargetUserPairSignature: "64be94245dd12f7d6d2d5f95839ecd6c50a3887f58edce5a0cb03a85dba505bd",
-		Network:                 0x01,
-		ATyp:                    0x01,
-		DSTAddr:                 "1.1.1.1",
-		DSTPort:                 80,
+		ConnectionID:       random.String(socksz.LengthConnectionID),
+		TargetUserClientID: "b0a501e947",
+		// TargetUserPairSignature: "64be94245dd12f7d6d2d5f95839ecd6c50a3887f58edce5a0cb03a85dba505bd",
+		Network: 0x01,
+		ATyp:    0x01,
+		DSTAddr: "1.1.1.1",
+		DSTPort: 80,
+		//
+		Secret: secret,
 	}
 
 	encoded, err := packet.Encode()
@@ -23,7 +26,9 @@ func TestRequestEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to encode %s", err)
 	}
 
-	decoded := &Request{}
+	decoded := &Request{
+		Secret: secret,
+	}
 	if err := decoded.Decode(encoded); err != nil {
 		t.Fatalf("failed to decode %s", err)
 	}

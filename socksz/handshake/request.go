@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/go-zoox/crypto/hmac"
 	"github.com/go-zoox/packet/socksz"
 )
 
@@ -40,10 +41,20 @@ type Request struct {
 	ATyp                    uint8
 	DSTAddr                 string
 	DSTPort                 uint16
+	//
+	Secret string
 }
 
 // Encode encodes the data
 func (r *Request) Encode() ([]byte, error) {
+	if r.Secret == "" {
+		return nil, fmt.Errorf("secret is required")
+	}
+
+	// generates start
+	r.TargetUserPairSignature = hmac.Sha256(fmt.Sprintf("%s_%s", r.ConnectionID, r.TargetUserClientID), r.Secret)
+	// generates done
+
 	buf := bytes.NewBuffer([]byte{})
 
 	n, err := buf.WriteString(r.ConnectionID)
@@ -102,6 +113,10 @@ func (r *Request) Encode() ([]byte, error) {
 
 // Decode decodes the data
 func (r *Request) Decode(raw []byte) error {
+	if r.Secret == "" {
+		return fmt.Errorf("secret is required")
+	}
+
 	reader := bytes.NewReader(raw)
 
 	// CONNECTION_ID
@@ -165,6 +180,11 @@ func (r *Request) Decode(raw []byte) error {
 		return fmt.Errorf("failed to read atyp:  %s", err)
 	}
 	r.DSTPort = binary.BigEndian.Uint16(buf[:2])
+
+	// verify
+	if r.TargetUserPairSignature != hmac.Sha256(fmt.Sprintf("%s_%s", r.ConnectionID, r.TargetUserClientID), r.Secret) {
+		return fmt.Errorf("invalid signature")
+	}
 
 	return nil
 }

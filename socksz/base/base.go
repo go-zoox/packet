@@ -21,6 +21,8 @@ type Base struct {
 	Crypto      uint8
 	Compression uint8
 	Data        []byte
+	//
+	Secret string
 }
 
 // Encode encodes the base data

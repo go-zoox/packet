@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/go-zoox/crypto/hmac"
 	"github.com/go-zoox/packet/socksz"
+	"github.com/go-zoox/random"
 )
 
 // DATA Protocol:
@@ -20,10 +22,23 @@ type Request struct {
 	Timestamp    string
 	Nonce        string
 	Signature    string
+	//
+	Secret string
 }
 
 // Encode encodes the request
 func (r *Request) Encode() ([]byte, error) {
+	if r.Secret == "" {
+		return nil, fmt.Errorf("secret is required")
+	}
+
+	// generates start
+	if r.Nonce == "" {
+		r.Nonce = random.String(socksz.LengthNonce)
+	}
+	r.Signature = hmac.Sha256(fmt.Sprintf("%s_%s_%s", r.UserClientID, r.Timestamp, r.Nonce), r.Secret, "hex")
+	// generates done
+
 	buf := bytes.NewBuffer([]byte{})
 
 	n, err := buf.WriteString(r.UserClientID)
@@ -51,6 +66,10 @@ func (r *Request) Encode() ([]byte, error) {
 
 // Decode decodes the request
 func (r *Request) Decode(raw []byte) error {
+	if r.Secret == "" {
+		return fmt.Errorf("secret is required")
+	}
+
 	reader := bytes.NewReader(raw)
 
 	// USER_CLIENT_ID
@@ -84,6 +103,11 @@ func (r *Request) Decode(raw []byte) error {
 		return fmt.Errorf("failed to read signature:  %s", err)
 	}
 	r.Signature = string(buf)
+
+	// verify signature
+	if r.Signature != hmac.Sha256(fmt.Sprintf("%s_%s_%s", r.UserClientID, r.Timestamp, r.Nonce), r.Secret, "hex") {
+		return fmt.Errorf("invalid signature")
+	}
 
 	return nil
 }

@@ -1,13 +1,18 @@
 package authenticate
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestRequestEncodeDecode(t *testing.T) {
+	secret := "666"
+
 	packet := &Request{
 		UserClientID: "0123456789",
 		Timestamp:    "1667982806000",
 		Nonce:        "123456",
-		Signature:    "8665ebcb30adc07590ae3209e8cb0c2b9b43762cf6656d95ddb52fbc2a45e39c",
+		// Signature:    "8665ebcb30adc07590ae3209e8cb0c2b9b43762cf6656d95ddb52fbc2a45e39c",
+		Secret: secret,
 	}
 
 	encoded, err := packet.Encode()
@@ -15,7 +20,9 @@ func TestRequestEncodeDecode(t *testing.T) {
 		t.Fatalf("failed to encode %s", err)
 	}
 
-	decoded := &Request{}
+	decoded := &Request{
+		Secret: secret,
+	}
 	if err := decoded.Decode(encoded); err != nil {
 		t.Fatalf("failed to decode %s", err)
 	}
