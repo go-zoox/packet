@@ -8,11 +8,16 @@ package base
 //  CMD 		- 命令
 //  CRYPTO 	- 加密算法
 //    0x00: 不加密
-//    0x01: AES-128-CBC
-//    0x02: AES-192-CBC
-//    0x03: AES-256-CBC
-//    0x04: AES-128-CFB
-//    0x05: AES-192-CFB
+//    0x01: AES-128-CFB
+//    0x02: AES-192-CFB
+//    0x03: AES-256-CFB
+//    0x04: AES-128-CBC
+//    0x05: AES-192-CBC
+//    0x06: AES-256-CBC
+//		0x07: AES-128-GCM
+//    0x08: AES-192-GCM
+//    0x09: AES-256-GCM
+//		0x10: CHACHA20-POLY1305
 //  COMPRESS - 压缩算法
 //    0x00: 不压缩
 //    0x01: GZIP
