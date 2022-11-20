@@ -58,17 +58,23 @@ func (r *Request) Encode() ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
 
 	n, err := buf.WriteString(r.ConnectionID)
-	if n != socksz.LengthConnectionID || err != nil {
+	if n != socksz.LengthConnectionID {
+		return nil, fmt.Errorf("failed to write ConnectionID: length expect %d, but got %d", socksz.LengthConnectionID, n)
+	} else if err != nil {
 		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
 	}
 
 	n, err = buf.WriteString(r.TargetUserClientID)
-	if n != socksz.LengthTargetUserClientID || err != nil {
+	if n != socksz.LengthTargetUserClientID {
+		return nil, fmt.Errorf("failed to write TargetUserClientID: length expect %d, but got %d", socksz.LengthTargetUserClientID, n)
+	} else if err != nil {
 		return nil, fmt.Errorf("failed to write TargetUserClientID: %s", err)
 	}
 
 	n, err = buf.WriteString(r.TargetUserPairSignature)
-	if n != socksz.LengthTargetUserPairSignature || err != nil {
+	if n != socksz.LengthTargetUserPairSignature {
+		return nil, fmt.Errorf("failed to write TargetUserPairSignature: length expect %d, but got %d", socksz.LengthTargetUserPairSignature, n)
+	} else if err != nil {
 		return nil, fmt.Errorf("failed to write TargetUserPairSignature: %s", err)
 	}
 
