@@ -30,13 +30,15 @@ const (
 // DATA Protocol:
 //
 // AUTHENTICATE DATA:
-// request:  USER_CLIENT_ID | TIMESTAMP | NONCE | SIGNATURE
-//             10           |    13     |   6   |  64 HMAC_SHA256
+// request:  USER_CLIENT_ID_LENGTH | USER_CLIENT_ID | TIMESTAMP | NONCE | SIGNATURE
+//                1                |   -            |    13     |   6   |  64 HMAC_SHA256
 // response: STATUS | MESSAGE
 //            1     |  -
 const (
+	// LengthUserClientIDLength is the length of USER_CLIENT_ID_LENGTH
+	LengthUserClientIDLength = 1
 	// LengthUserClientID is the byte length of USER_CLIENT_ID
-	LengthUserClientID = 10
+	// LengthUserClientID = 10 // dynamic
 	// LengthTimestamp is the byte length of TIMESTAMP
 	LengthTimestamp = 13
 	// LengthNonce is the byte length of NONCE
@@ -48,15 +50,15 @@ const (
 )
 
 // Handshake DATA:
-// request:  CONNECTION_ID | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_KEY |  NETWORK   | ATYP                 | DST.ADDR 							 | DST.PORT
-//					       13      |       10              |					10          | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
+// request:  CONNECTION_ID | USER_CLIENT_ID_LENGTH | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_KEY |  NETWORK   | ATYP                 | DST.ADDR 							 | DST.PORT
+//					       13      |          1            |        -              |					10          | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
 // response: CONNECTION_ID | STATUS | MESSAGE
 //                 13      |  1     |  -
 const (
 	// LengthConnectionID ...
 	LengthConnectionID = 13
-	// LengthTargetUserClientID ...
-	LengthTargetUserClientID = 10
+	// // LengthTargetUserClientID ...
+	// LengthTargetUserClientID = 10
 	// LengthTargetUserPairSignature ...
 	LengthTargetUserPairSignature = 64
 	// LengthNetwork ...

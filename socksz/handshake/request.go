@@ -64,9 +64,15 @@ func (r *Request) Encode() ([]byte, error) {
 		return nil, fmt.Errorf("failed to write ConnectionID: %s", err)
 	}
 
+	lengthUserClientID := len(r.TargetUserClientID)
+	err = buf.WriteByte(byte(lengthUserClientID))
+	if err != nil {
+		return nil, fmt.Errorf("failed to write user client id length:  %s", err)
+	}
+
 	n, err = buf.WriteString(r.TargetUserClientID)
-	if n != socksz.LengthTargetUserClientID {
-		return nil, fmt.Errorf("failed to write TargetUserClientID: length expect %d, but got %d", socksz.LengthTargetUserClientID, n)
+	if n != lengthUserClientID {
+		return nil, fmt.Errorf("failed to write TargetUserClientID: length expect %d, but got %d", lengthUserClientID, n)
 	} else if err != nil {
 		return nil, fmt.Errorf("failed to write TargetUserClientID: %s", err)
 	}
@@ -129,10 +135,18 @@ func (r *Request) Decode(raw []byte) error {
 	}
 	r.ConnectionID = string(buf)
 
-	// TARGET_USER_CLIENT_ID
-	buf = make([]byte, socksz.LengthTargetUserClientID)
+	// USER_CLIENT_ID_LENGTH
+	buf = make([]byte, socksz.LengthUserClientIDLength)
 	n, err = io.ReadFull(reader, buf)
-	if n != socksz.LengthTargetUserClientID || err != nil {
+	if n != socksz.LengthUserClientIDLength || err != nil {
+		return fmt.Errorf("failed to read user client id length:  %s", err)
+	}
+	lengthUserClientID := int(buf[0])
+
+	// TARGET_USER_CLIENT_ID
+	buf = make([]byte, lengthUserClientID)
+	n, err = io.ReadFull(reader, buf)
+	if n != lengthUserClientID || err != nil {
 		return fmt.Errorf("failed to read target user client id:  %s", err)
 	}
 	r.TargetUserClientID = string(buf)

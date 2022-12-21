@@ -5,10 +5,11 @@ package handshake
 //   1  |  1  |  1     |   1      | -
 
 // Auth Request DATA:
-// 	CONNECTION_ID | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_SIGNATURE | NETWORK | ATYP | DST.ADDR  | DST.PORT
-// 	      13      |       10              |					    64             |    1    |   1  |  Variable |    2
+// 	CONNECTION_ID | USER_CLIENT_ID_LENGTH | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_SIGNATURE | NETWORK | ATYP | DST.ADDR  | DST.PORT
+// 	      13      |       1               |        -              |					    64             |    1    |   1  |  Variable |    2
 //
 // 	CONNECTION_ID 							- 连接 ID
+//  USER_CLIENT_ID_LENGTH       - 目标用户 Client ID 的长度
 //  TARGET_USER_CLIENT_ID 			- 目标用户 Client ID
 //  TARGET_USER_PAIR_SIGNATURE  - 目标用户配对签名，签名算法: HMAC_SHA256(CONNECTION_ID + TARGET_USER_CLIENT_ID)
 //  NETWORK 										- 连接网络类型

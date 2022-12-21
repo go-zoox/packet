@@ -5,9 +5,10 @@ package authenticate
 //   1  |  1  |  1     |   1      | -
 
 // Auth Request DATA:
-// 	USER_CLIENT_ID | TIMESTAMP | NONCE | SIGNATURE
-// 	      10       |    13     |   6   |  64 (HMAC_SHA256)
+// 	USER_CLIENT_ID_LENGTH | USER_CLIENT_ID | TIMESTAMP | NONCE | SIGNATURE
+// 	      1               |        -       |    13     |   6   |  64 (HMAC_SHA256)
 //
+//  USER_CLIENT_ID_LENGTH - 用户 Client ID 的长度
 // 	USER_CLIENT_ID 	- 用户的 Client ID
 //  TIMESTAMP 			- 时间戳，毫秒
 //  NONCE 					- 随机数
