@@ -14,8 +14,9 @@ package socksz
 //  PAIR_KEY
 
 // PACKET Protocol:
-//  VER | CMD | CRYPTO | COMPRESS | DATA
-//   1  |  1  |  1     |   1      | -
+//
+//	VER | CMD | CRYPTO | COMPRESS | DATA
+//	 1  |  1  |  1     |   1      | -
 const (
 	// LengthVer ...
 	LengthVer = 1
@@ -31,9 +32,12 @@ const (
 //
 // AUTHENTICATE DATA:
 // request:  USER_CLIENT_ID_LENGTH | USER_CLIENT_ID | TIMESTAMP | NONCE | SIGNATURE
-//                1                |   -            |    13     |   6   |  64 HMAC_SHA256
+//
+//	1                |   -            |    13     |   6   |  64 HMAC_SHA256
+//
 // response: STATUS | MESSAGE
-//            1     |  -
+//
+//	1     |  -
 const (
 	// LengthUserClientIDLength is the length of USER_CLIENT_ID_LENGTH
 	LengthUserClientIDLength = 1
@@ -47,13 +51,18 @@ const (
 	LengthSignature = 64
 	// LengthStatus is the byte length of STATUS
 	LengthStatus = 1
+	// LengthJoinAsRoomType is the byte length of join as room type
+	LengthJoinAsRoomType = 1
 )
 
 // Handshake DATA:
 // request:  CONNECTION_ID | USER_CLIENT_ID_LENGTH | TARGET_USER_CLIENT_ID | TARGET_USER_PAIR_KEY |  NETWORK   | ATYP                 | DST.ADDR 							 | DST.PORT
-//					       13      |          1            |        -              |					10          | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
+//
+//	13      |          1            |        -              |					10          | 1(tcp/udp) | 1(IPv4/IPv6/Domain)  |   4 or 16 or domain    |    2
+//
 // response: CONNECTION_ID | STATUS | MESSAGE
-//                 13      |  1     |  -
+//
+//	13      |  1     |  -
 const (
 	// LengthConnectionID ...
 	LengthConnectionID = 13

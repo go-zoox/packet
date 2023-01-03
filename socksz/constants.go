@@ -18,6 +18,8 @@ const (
 	CommandClose = 0x05
 	// CommandBind client <-> server
 	CommandBind = 0x06
+	// CommandJoinAsAgent client <-> server
+	CommandJoinAsAgent = 0x07
 )
 
 const (
